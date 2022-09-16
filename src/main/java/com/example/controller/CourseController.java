@@ -1,79 +1,87 @@
 package com.example.controller;
 
 import com.example.entity.OnlineCourse;
-import com.example.entity.Students;
-import com.example.service.impl.CourseServiceImpl;
+import com.example.entity.Student;
+import com.example.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 
 
 @RestController
 public class CourseController {
 
     @Autowired
-    CourseServiceImpl courseService;
+    private CourseService courseService;
 
-    public CourseController(CourseServiceImpl courseService) {
+    public CourseController(CourseService courseService) {
         this.courseService = courseService;
     }
 
     @PostMapping("/courses")
-    @ResponseBody
     public OnlineCourse createCourse(@RequestBody OnlineCourse onlineCourse) {
 
-        return courseService.createCourse ( onlineCourse );
+        return courseService.createCourse(onlineCourse);
     }
 
-    @GetMapping("/courses-show")
-    public Collection< OnlineCourse > showCourses(
-           // @RequestParam("show-closed") boolean isClosed
+    @GetMapping("/courses")
+    public Collection<OnlineCourse> showCourses(
+            @RequestParam(value = "showClosed", required = false) boolean showClosed // false
     ) {
 
-        return courseService.showAllCourses ( );
+        // course-1 closed
+        // course-2 !closed
+        // course-3 !closed
+
+        return courseService.findCourses(showClosed);
     }
 
     @GetMapping("/courses/{id}")
     public OnlineCourse findById(@PathVariable("id") Integer id) {
 
-        return courseService.findCourseById ( id );
+        return courseService.findCourseById(id);
     }
 
     @PutMapping("/courses/{id}")
-    public OnlineCourse updateById(@PathVariable("id") Integer id) {
-        OnlineCourse course = courseService.updateCourseInfoById ( id );
+    public OnlineCourse updateById(@PathVariable("id") Integer id,
+                                   @RequestBody OnlineCourse onlineCourse) {
+        OnlineCourse course = courseService.updateCourseInfoById(id, onlineCourse);
         return course;
     }
 
     @DeleteMapping("courses/{id}")
-    public void deletById(@PathVariable("id") Integer id) {
-        courseService.deleteCourseById ( id );
+    public void deleteById(@PathVariable("id") Integer id) {
+        courseService.deleteCourseById(id);
     }
 
     @PutMapping("/courses/{id}/students/{name}")
-    public List< Students > addStudents(@PathVariable("id") String id
-            , @PathVariable("name") Students name) {
-        return courseService.addStudent ( id, name );
+    public Set<Student> addStudents(
+            @PathVariable("id") Integer id,
+            @PathVariable("name") String name) {
+
+        return courseService.addStudent(id, name);
 
     }
 
     @GetMapping("/courses/{id}/students")
-    public List< Students > getAllStudents(@PathVariable("id") String id) {
-        return courseService.showAllStudents ( id );
+    public Set<Student> getAllStudents(@PathVariable("id") Integer id) {
+        return courseService.showAllStudents(id);
     }
 
     @DeleteMapping("/courses/{id}/students/{name}")
-    public void deleteStudents(@PathVariable("id") String id
-            , @PathVariable("name") String name) {
-        courseService.removeStudentsByName ( name, id );
+    public void deleteStudents(
+            @PathVariable("id") Integer courseId,
+            @PathVariable("name") String name) {
+
+        courseService.removeStudentsByName(name, courseId);
 
     }
 
     @PutMapping("/courses/{id}/toggle-course")
-    public void changeStatusClosedOfCourse(@PathVariable("id") String id) {
-        courseService.changeCourseStatus ( id );
+    public void changeStatusClosedOfCourse(@PathVariable("id") Integer id) {
+        courseService.changeCourseStatus(id);
     }
 
 }

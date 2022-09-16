@@ -1,27 +1,29 @@
 package com.example.service;
 
 import com.example.entity.OnlineCourse;
-import com.example.entity.Students;
+import com.example.entity.Student;
 
-import java.util.List;
+import java.util.Set;
 
 public interface CourseService {
 
     OnlineCourse createCourse(OnlineCourse onlineCourse);
 
-    List<OnlineCourse> showAllCourses();
+    OnlineCourse findCourseById(Integer courseId);
 
-    OnlineCourse findCourseById(Integer id);
+    OnlineCourse updateCourseInfoById(Integer courseId, OnlineCourse course);
 
-    OnlineCourse updateCourseInfoById(Integer id);
+    void deleteCourseById(Integer courseId);
 
-    void deleteCourseById(Integer id);
+    Set<Student> addStudent(Integer courseId, String student);
 
-    List< Students > addStudent(String id, Students st);
+    void removeStudentsByName(String name, Integer courseId);
 
-    void removeStudentsByName(String name, String id);
+    void changeCourseStatus(Integer id);
 
-    void changeCourseStatus(String id);
+    Set<OnlineCourse> findCourses(boolean showClosed);
+
+    Set<Student> showAllStudents(Integer courseId);
 }
 
 
